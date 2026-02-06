@@ -1,0 +1,45 @@
+/* static/css/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F8F9FA; /* Light grey background */
+}
+
+h2 {
+    color: #111827; /* Dark text */
+    letter-spacing: -0.02em;
+}
+
+/* Navigation Tabs */
+.nav-pills .nav-link {
+    color: #6B7280;
+    font-weight: 500;
+    border-radius: 20px; /* Pill shape */
+    padding: 8px 16px;
+    margin-right: 8px;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #2563EB; /* Figma Blue */
+    color: white;
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+    border: 1px solid #E5E7EB; /* Subtle border */
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+.text-success {
+    color: #10B981 !important; /* Figma Green */
+}
+
+.text-danger {
+    color: #EF4444 !important; /* Figma Red */
+}

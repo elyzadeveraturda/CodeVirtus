@@ -1,16 +1,34 @@
 from rest_framework import permissions
 
-class IsAdminOrNoDelete(permissions.BasePermission):
+
+class AccidentRolePermission(permissions.BasePermission):
     """
-    Custom permission to only allow Admins to delete objects.
-    Personnel can View (GET) and Add (POST), but NOT Delete.
+    Role-based permissions for AccidentReport API:
+
+    - Any authenticated user (any role) can READ (GET/HEAD/OPTIONS).
+    - Only Admins (is_staff) and Encoder group members can CREATE/UPDATE.
+    - Only Admins (is_staff) can DELETE.
+
+    Expected roles (Django groups):
+    - 'Encoder'
+    - 'Officer'
+    Admin is represented by user.is_staff.
     """
+
     def has_permission(self, request, view):
-        # We already know they are logged in because of settings.py
-        # Check if they are trying to DELETE
+        user = request.user
+
+        if not user or not user.is_authenticated:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
         if request.method == 'DELETE':
-            # Only allow if they are an Admin (is_staff)
-            return request.user.is_staff
-        
-        # For GET, POST, PUT, PATCH -> Allow everyone who is logged in
-        return True
+            return user.is_staff
+
+        if user.is_staff:
+            return True
+
+        # Encoders can create/update
+        return user.groups.filter(name='Encoder').exists()

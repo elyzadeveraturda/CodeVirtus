@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold">Admin Data Entry - Historical Accident Record</h5>
+        <small class="text-muted">Encode historical accident records for the EDSA prediction system</small>
+    </div>
+    <div class="card-body p-4">
+        <form id="entryForm">
+            {% csrf_token %}
+            
+            <h6 class="fw-bold mb-3">Date & Time Information</h6>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Date of Accident *</label>
+                    <input type="date" class="form-control" id="date" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Time of Accident *</label>
+                    <input type="time" class="form-control" id="time" required>
+                </div>
+            </div>
+
+            <h6 class="fw-bold mb-3">Location Information</h6>
+            <div class="mb-4">
+                <label class="form-label">EDSA Segment *</label>
+                <select class="form-select" id="location" required>
+                    <option value="" selected disabled>Select EDSA segment</option>
+                    {% for segment in segments %}
+                        <option value="{{ segment.name }}">{{ segment.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <h6 class="fw-bold mb-3">Accident Details</h6>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Severity Level *</label>
+                    <select class="form-select" id="severity" required>
+                        <option value="" selected disabled>Select severity</option>
+                        {% for s in severities %}
+                            <option value="{{ s.code }}">{{ s.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="form-label">Weather Condition</label>
+                    <select class="form-select" id="weather">
+                        <option value="" selected disabled>Select weather</option>
+                        {% for w in weather_options %}
+                            <option value="{{ w.name }}">{{ w.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Road Condition</label>
+                    <select class="form-select" id="road_condition">
+                        <option value="" selected disabled>Select road condition</option>
+                        {% for r in road_options %}
+                            <option value="{{ r.name }}">{{ r.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Traffic Volume</label>
+                    <select class="form-select" id="traffic_volume">
+                        <option value="" selected disabled>Select traffic volume</option>
+                        {% for t in traffic_options %}
+                            <option value="{{ t.name }}">{{ t.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button type="reset" class="btn btn-outline-secondary">Reset Form</button>
+                <button type="submit" class="btn btn-dark">Submit Record</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('entryForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // 1. Gather Data
+    const formData = {
+        date_time: `${document.getElementById('date').value}T${document.getElementById('time').value}:00Z`,
+        location_name: document.getElementById('location').value,
+        city: 'Quezon City', // Default for now
+        severity: document.getElementById('severity').value,
+        weather_condition: document.getElementById('weather').value || '',
+        road_condition: document.getElementById('road_condition').value || '',
+        traffic_volume: document.getElementById('traffic_volume').value || '',
+        latitude: 14.6091, // Fake lat for now
+        longitude: 121.0223, // Fake long for now
+        description: "Manual Entry"
+    };
+
+    // 2. Send to API
+    try {
+        const response = await fetch('/api/accidents/reports/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+            alert("Accident Saved Successfully!");
+            document.getElementById('entryForm').reset();
+        } else {
+            const err = await response.json();
+            alert("Error: " + JSON.stringify(err));
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Network Error");
+    }
+});
+</script>
+{% endblock %}

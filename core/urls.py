@@ -16,14 +16,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# Add these two imports:
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from django.contrib.auth import views as auth_views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from accidents.views import overview_dashboard, data_entry, maintenance_panel
+
+
 urlpatterns = [
+    # Django admin
     path('admin/', admin.site.urls),
+
+    # API
     path('api/accidents/', include('accidents.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Web pages
+    path('', overview_dashboard, name='overview'),
+    path('entry/', data_entry, name='admin_entry'),
+    path('maintenance/', maintenance_panel, name='maintenance'),
+
+    # Auth (session-based)
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='overview'), name='logout'),
 ]

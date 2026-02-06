@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted">Total Recorded Accidents</h6>
+                <h2 class="fw-bold mb-0" id="total-accidents">3,904</h2>
+                <small class="text-success">↓ 4.9% vs 2023</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted">Total Injuries</h6>
+                <h2 class="fw-bold mb-0" id="total-injuries">5,222</h2>
+                <small class="text-success">↓ 5.1% vs 2023</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted">Total Fatalities</h6>
+                <h2 class="fw-bold mb-0 text-danger" id="total-fatalities">238</h2>
+                <small class="text-danger">↑ 37.5% vs 2023</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted">Most Accident-Prone Segment</h6>
+                <h2 class="fw-bold mb-0">Ayala <span class="text-danger">⚠</span></h2>
+                <small class="text-muted">674 accidents</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold">Accident, Injury, and Fatality Trends</h5>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-secondary btn-sm">Monthly</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm">Yearly</button>
+                <button type="button" class="btn btn-dark btn-sm">Full Period</button>
+            </div>
+        </div>
+        <canvas id="trendChart" height="100"></canvas>
+    </div>
+</div>
+
+{% load static %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

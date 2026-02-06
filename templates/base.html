@@ -1,0 +1,83 @@
+{% load static auth_extras %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDSA Accident System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-light">
+
+    <div class="container-fluid py-4 px-5">
+        
+        <div class="mb-4">
+            <h2 class="fw-bold text-dark">EDSA Road Accident Analysis and Prediction System</h2>
+            <p class="text-muted">Historical Data Period: 2021–2024 | Academic Research Project</p>
+        </div>
+
+        <ul class="nav nav-pills mb-4">
+            <!-- Overview: any authenticated role -->
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'overview' %}active{% endif %}"
+                   href="{% url 'overview' %}">
+                    Overview
+                </a>
+            </li>
+
+            <!-- Prediction: Officer, Encoder, Admin -->
+            {% if request.user|has_group:"Officer" or request.user|has_group:"Encoder" or request.user.is_staff %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'prediction' %}active{% endif %}"
+                   href="#">
+                    Prediction
+                </a>
+            </li>
+            {% endif %}
+
+            <!-- Data Entry: Encoder and Admin -->
+            {% if request.user|has_group:"Encoder" or request.user.is_staff %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'admin_entry' %}active{% endif %}"
+                   href="{% url 'admin_entry' %}">
+                    Admin Data Entry
+                </a>
+            </li>
+            {% endif %}
+
+            <!-- Right side: Maintenance + Admin Panel + Login/Logout -->
+            <li class="nav-item ms-auto">
+                {% if request.user.is_staff %}
+                    <a class="nav-link {% if request.resolver_match.url_name == 'maintenance' %}active{% endif %}"
+                       href="{% url 'maintenance' %}">
+                        Maintenance
+                    </a>
+                {% endif %}
+            </li>
+
+            <li class="nav-item">
+                {% if request.user.is_staff %}
+                    <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">Admin Panel 🔒</a>
+                {% endif %}
+            </li>
+
+            <li class="nav-item">
+                {% if request.user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'logout' %}">Logout ({{ request.user.username }})</a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </li>
+        </ul>
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
